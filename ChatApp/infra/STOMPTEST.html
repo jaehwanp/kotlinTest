@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>STOMP WebSocket 1:1 Chat Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>STOMP WebSocket 1:1 Chat Test</h2>
+
+<label>Access Token:</label><br />
+<textarea id="token" rows="2" cols="80"></textarea><br /><br />
+
+<label>내 아이디 (SendId):</label><br />
+<input id="myId" type="text" /><br /><br />
+
+<label>상대방 아이디 (상대에게 보낼 receiverId):</label><br />
+<input id="toId" type="text" /><br /><br />
+
+<label>Room ID:</label><br />
+<input id="roomId" type="text" /><br /><br />
+
+<label>Message:</label><br />
+<textarea id="message" rows="3" cols="80"></textarea><br /><br />
+
+<label>Message Type:</label>
+<select id="messageType">
+  <option value="TALK">TALK</option>
+  <option value="ENTER">ENTER</option>
+  <option value="LEAVE">LEAVE</option>
+</select>
+<br /><br />
+
+<button onclick="connect()">Connect & Subscribe</button>
+<button onclick="send()">Send</button>
+<button onclick="disconnect()">Disconnect</button>
+<button onclick="init1()">11111</button>
+<button onclick="init2()">22222</button>
+
+<h3>Received:</h3>
+<pre id="output"></pre>
+
+<script>
+  let stompClient = null;
+  let subscription = null;
+
+  function connect() {
+    const socket = new SockJS("http://localhost:8084/ws/chat");
+    stompClient = Stomp.over(socket);
+
+    const token = document.getElementById("token").value.trim();
+    const myId = document.getElementById("myId").value.trim();
+
+    stompClient.connect(
+            { Authorization: `Bearer ${token}` },
+            function (frame) {
+              document.getElementById("output").textContent += "✅ Connected\n";
+
+              const myTopic = `/user/queue/messages`;
+              subscription = stompClient.subscribe(myTopic, function (messageOutput) {
+                try {
+                  const data = JSON.parse(messageOutput.body);
+                  document.getElementById("output").textContent += `\n📩 [${data.senderId} ➡ ${data.receiverId}] ${data.content}`;
+                } catch {
+                  document.getElementById("output").textContent += `\n📩 (수신) ${messageOutput.body}`;
+                }
+              });
+
+              document.getElementById("output").textContent += `\n🔔 구독 성공: ${myTopic}\n`;
+            },
+            function (error) {
+              document.getElementById("output").textContent += "❌ Connection failed\n";
+            }
+    );
+  }
+
+  function send() {
+    const roomId = document.getElementById("roomId").value.trim();
+    const senderId = document.getElementById("myId").value.trim();
+    const receiverId = document.getElementById("toId").value.trim();
+    const content = document.getElementById("message").value;
+    const messageType = document.getElementById("messageType").value;
+
+    const chatMessage = {
+      roomId: roomId,
+      senderId: senderId,
+      receiverId: receiverId,
+      content: content,
+      messageType: messageType
+    };
+
+    stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+    document.getElementById("output").textContent += `\n📝 Sent: ${JSON.stringify(chatMessage)}`;
+  }
+
+  function init1() {
+    document.getElementById("myId").value = "6e795240-ca74-4dc2-b4db-e055e1ed37f9";
+    document.getElementById("toId").value = "74790e94-c7cc-4548-9d61-033f25cfad7d";
+    document.getElementById("roomId").value = "tst";
+    document.getElementById("message").textContent = "보냈음tst";
+  }
+
+  function init2() {
+    document.getElementById("myId").value = "74790e94-c7cc-4548-9d61-033f25cfad7d";
+    document.getElementById("toId").value = "6e795240-ca74-4dc2-b4db-e055e1ed37f9";
+    document.getElementById("roomId").value = "test";
+    document.getElementById("message").textContent = "보냈음test";
+  }
+
+  function disconnect() {
+    if (subscription) {
+      subscription.unsubscribe();
+    }
+    if (stompClient) {
+      stompClient.disconnect(function () {
+        document.getElementById("output").textContent += "\n🔌 Disconnected";
+      });
+    }
+  }
+</script>
+</body>
+</html>

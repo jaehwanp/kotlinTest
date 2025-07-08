@@ -1,0 +1,15 @@
+version: '3.8'
+# docker compose -f docker-compose.mysql.yml up -d
+services:
+  mysql:
+    image: mysql:latest
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  mysql-data:
