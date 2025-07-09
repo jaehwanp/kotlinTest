@@ -1,6 +1,8 @@
 # 실시간 채팅 back-end
 
-Spring STOMP 공부용으로 만들기
+> 목적 : Spring STOMP 공부용으로 만들기
+>
+> Spring Boot, kotlin, kafka, mysql, docker
 
 https://github.com/jaehwanp/kotlinTest/tree/main/ChatApp
 
@@ -92,9 +94,11 @@ Chat - STOMP를 사용한 WebSocket 채팅
 일단 kafka를 사용했으니 부하테스트를 진행하려고 테스트 툴을 찾아보다가 artillery를 이용하여 해보려했지만 전부 실패메시지가 떴다.
 
 - 📌 실패 (Artillery는 STOMP를 지원하지 않는다는걸 알았다)
+
   ![](https://velog.velcdn.com/images/jaehwanp/post/cea1ff0f-13ef-4e4d-b985-72af544d65d8/image.png)
 
 - 📌 임시 테스트 (chatGPT에게 부탁하여 NodeJS로 소켓 테스트만 함)
+
   ![](https://velog.velcdn.com/images/jaehwanp/post/8c7ad593-4f89-4d46-ac20-7bcb5be031ce/image.png)
 
 100명의 클라이언트로 100번 메시지 보냄 -> 10000개의 메시지
