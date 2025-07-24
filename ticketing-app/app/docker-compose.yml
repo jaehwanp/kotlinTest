@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Log Application 1
+  log-consumer-1:
+    build:
+      context: ../log-consumer
+    container_name: log-consumer-1
+    environment:
+      - INSTANCE_ID=1
+    ports:
+      - '8082:8082'
+    networks:
+      - ticket-network
+
+  # Spring Boot Application 1
+  springboot-1:
+    build:
+      context: ../springboot
+    container_name: springboot-1
+    environment:
+      - INSTANCE_ID=1
+    ports:
+      - '8081:8081'
+    networks:
+      - ticket-network
+
+#  # Spring Boot Application 2
+#  ticketing-app-2:
+#    build:
+#      context: ../springboot
+#    container_name: ticketing-app-2
+#    environment:
+#      - INSTANCE_ID=2
+#    ports:
+#      - "8082:8080"
+#    depends_on:
+#      - redis
+#      - kafka
+#
+#  # Spring Boot Application 3
+#  ticketing-app-3:
+#    build:
+#      context: ../springboot
+#    container_name: ticketing-app-3
+#    environment:
+#      - INSTANCE_ID=3
+#    ports:
+#      - "8083:8080"
+#    depends_on:
+#      - redis
+#      - kafka
+
+networks:
+  ticket-network:
+    external: true
