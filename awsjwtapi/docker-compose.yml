@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+
+  api-app:
+    image: api-app:latest
+    container_name: api-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - aja-nw
+
+  # Mysql
+  mysql:
+    image: mysql:8.0.43
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=caching_sha2_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aja-nw
+    volumes:
+      - mysql_data:/var/lib/mysql
+  # Redis
+  redis:
+    image: redis:8.0.3-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+      - aja-nw
+    volumes:
+      - redis_data:/data
+
+networks:
+  aja-nw:
+
+volumes:
+  mysql_data:
+  redis_data:

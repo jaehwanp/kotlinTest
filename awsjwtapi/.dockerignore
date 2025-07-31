@@ -1,0 +1,6 @@
+.gradle
+out
+.idea
+*.iml
+*.log
+README1.md
