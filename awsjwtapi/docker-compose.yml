@@ -2,17 +2,17 @@ version: '3.8'
 
 services:
 
-  api-app:
-    image: api-app:latest
-    container_name: api-app
-    restart: always
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql
-      - redis
-    networks:
-      - aja-nw
+#  api-app:
+#    image: api-app:latest
+#    container_name: api-app
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - mysql
+#      - redis
+#    networks:
+#      - aja-nw
 
   # Mysql
   mysql:

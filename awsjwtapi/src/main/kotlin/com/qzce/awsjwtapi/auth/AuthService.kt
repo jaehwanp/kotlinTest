@@ -21,7 +21,7 @@ class AuthService(
     fun signup(request: SignupRequest) {
 
         val account = Account(
-            loginId = request.loginId,
+            email = request.email,
             name = request.name,
             password = passwordEncoder.encode(request.password)
         )
@@ -36,7 +36,7 @@ class AuthService(
 
     // 로그인
     fun signin(request: LoginRequest): Pair<String, String> {
-        val account = authRepository.findByLoginId(request.loginId) ?: throw IllegalArgumentException("Invalid")
+        val account = authRepository.findByEmail(request.email) ?: throw IllegalArgumentException("Invalid")
 
         if(!passwordEncoder.matches(request.password, account.password)) {
             throw IllegalArgumentException("Invalid ID")

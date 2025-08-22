@@ -1,8 +1,5 @@
 package com.qzce.awsjwtapi.jwt
 
-import com.qzce.awsjwtapi.account.Account
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -17,7 +14,7 @@ class JwtProvider(
     private val key = Keys.hmacShaKeyFor(secretKey.toByteArray())
 
     // 토큰 String return
-    private fun getToken(accountId: String, expireTime: Int): String {
+    private fun getToken(accountId: String?, expireTime: Int): String {
         return Jwts.builder()
             .setSubject(accountId)
             .setExpiration(Date(System.currentTimeMillis() + expireTime))
@@ -26,13 +23,12 @@ class JwtProvider(
     }
 
     // 액세스 토큰 발급
-    fun createAccessToken(accountId: String): String {
+    fun createAccessToken(accountId: String?): String {
         return getToken(accountId, 1000 * 60 * 30)
     }
 
     // 리프레쉬 토큰 발급
-    fun createRefreshToken(accountId: String): String {
-
+    fun createRefreshToken(accountId: String?): String {
         return getToken(accountId, 1000 * 60 * 60 * 24 * 7)
     }
 

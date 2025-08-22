@@ -17,7 +17,7 @@ class AuthController(
     @PostMapping("/signup")
     fun signup(@RequestBody request: SignupRequest): ResponseEntity<SignupResponse> {
         authService.signup(request)
-        return ResponseEntity.status(HttpStatus.OK).body(SignupResponse(request.loginId, "Sign Up Success"))
+        return ResponseEntity.status(HttpStatus.OK).body(SignupResponse(request.email, "Sign Up Success"))
     }
 
     // 로그인
@@ -64,11 +64,5 @@ class AuthController(
     @GetMapping("/x")
     fun loginUnnecessary(): String {
         return "✅"
-    }
-
-    // google
-    @PostMapping("/google-login")
-    fun googleLogin(): ResponseEntity<String> {
-        return ResponseEntity.ok("OK!!!")
     }
 }
